@@ -8,13 +8,13 @@ public class snmpAgent {
 
 	public static void main(String[] args) {
 	      
-        long temps = 2000;                      // délai avant de répéter la tache : 2000 = 2 seconde
-        long startTime = 0;                    // délai avant la mise en route (0 demarre immediatement)
-        Timer timer = new Timer();             // création du timer
-        TimerTask tache = new TimerTask() {     // création et spécification de la tache à effectuer
+        long temps = 2000;                     // time before repeating the task : 2000 = 2 secondes
+        long startTime = 0;                    // time before starting the task (0 : immediat start)
+        Timer timer = new Timer();             // timer creation
+        TimerTask tache = new TimerTask() {    // timer task creation and specification of what will be done
             @Override
                 public void run() {
-                    String line;
+                    String line; 
                     String value;
                     int valueInteger = 0;
                     //String value = 0;
@@ -43,7 +43,7 @@ public class snmpAgent {
                     }
                 }
         };
-        timer.scheduleAtFixedRate(tache,startTime,temps);  // ici on lance la mecanique
+        timer.scheduleAtFixedRate(tache,startTime,temps);  // beginning of the mechanism
  
         }
 
