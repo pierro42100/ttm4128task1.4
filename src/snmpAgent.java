@@ -57,7 +57,8 @@ public class snmpAgent {
                             if(valueInteger > 14712500){
                             	commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif anotif s \"here\"";
                             	cmd[2] = commandline;
-                                Process r = Runtime.getRuntime().exec(cmd);
+                                
+                            	Process r = Runtime.getRuntime().exec(cmd);
                             }
                             
                             // if > treshold (treshold for 5-10 traps in 15 minutes)
