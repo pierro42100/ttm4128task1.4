@@ -12,7 +12,7 @@ public class snmpAgent {
 	
 	public static void main(String[] args) {
 	     
-				////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////
 		
         long temps = 2000;                     // time before repeating the task : 2000 = 2 secondes
         long startTime = 0;                    // time before starting the task (0 : immediat start)
@@ -24,16 +24,17 @@ public class snmpAgent {
                     String line; 
                     String value;
                     int valueInteger = 0;
-                    //String value = 0;
-                    //String[] cmd = {"bash","-c","ls"};
-                    //String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 sysContact.0"};
+                    // String value = 0;
+                    // String[] cmd = {"bash","-c","ls"};
+                    // String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 sysContact.0"};
                     // Total RAM used: .1.3.6.1.4.1.2021.4.6.0 snmpget -v 2c -c ttm4128 127.0.0.1 UCD-SNMP-MIB::memAvailReal.0
                     
+                    String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0";
                     // First data :
-                    String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0"};
+                    String[] cmd = {"bash","-c",commandline};
                     
                     // Second data :
-                    //String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0"};
+                    // String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0"};
                     
                     System.out.println("Hello, world!\n"); //test
                     try { 
@@ -43,13 +44,23 @@ public class snmpAgent {
                         while ((line = input.readLine()) != null) { // Read data
                    
                             System.out.println(line);
-                            value = line.substring(line.lastIndexOf(" ")+1); //Get the value
+                            value = line.substring(line.lastIndexOf(" ")+1); // Get the value
                             //lastWord = line.substring(line.lastIndexOf(" ")-1);
                             //System.out.println(value);
                             valueInteger = Integer.valueOf(value); // convert string into integer
-                            System.out.println(valueInteger); //print the integer value
+                            System.out.println(valueInteger); // print the integer value
+                            
+                            // Write value in text file
                             write(value + "\n"); //EOL
-                            // if > treshold (treshold : 5-10 in 15 minutes)
+                            
+                            // Just a test
+                            if(valueInteger > 14712500){
+                            	commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif anotif s \"here\"";
+                            	cmd[2] = commandline;
+                                Process r = Runtime.getRuntime().exec(cmd);
+                            }
+                            
+                            // if > treshold (treshold for 5-10 traps in 15 minutes)
                             // --> snmptrap	
                             // else
                             // nothing
