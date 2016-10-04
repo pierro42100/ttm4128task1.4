@@ -54,7 +54,7 @@ public class snmpAgent {
                             write(value + "\n"); //EOL
                             
                             // Just a test
-                            if(valueInteger > 14712500){
+                            if(valueInteger > 449789){
                             	commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif anotif s \"here\"";
                             	cmd[2] = commandline;
                                 
