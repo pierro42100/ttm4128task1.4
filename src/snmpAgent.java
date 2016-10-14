@@ -38,7 +38,7 @@ public class snmpAgent {
                     
                     System.out.println("Hello, world!\n"); //test
                     try { 
-                        Process p = Runtime.getRuntime().exec(cmd);
+                        Process p = Runtime.getRuntime().exec(cmd); //Execute the cmd
                         BufferedReader input =
                             new BufferedReader(new InputStreamReader(p.getInputStream())); 
                         while ((line = input.readLine()) != null) { // Read data
@@ -60,12 +60,7 @@ public class snmpAgent {
                                 
                             	Process r = Runtime.getRuntime().exec(cmd);
                             }
-                            
-                            // if > treshold (treshold for 5-10 traps in 15 minutes)
-                            // --> snmptrap	
-                            // else
-                            // nothing
-                            
+ 
                         }
                         input.close();
                     } catch (Exception e) {
