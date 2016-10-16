@@ -46,7 +46,7 @@ public class snmpAgent {
 				// Write value in text file by calling the method write
 				write(valueInteger1 + "\n");
 				
-				System.out.println("value 1 : " + valueInteger1);
+				System.out.println("ipInReceives : " + valueInteger1);
 
 				// definition of the threshold                            
 				int threshold = 449789;
@@ -58,7 +58,7 @@ public class snmpAgent {
 					cmd[2] = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0";                   
 					valueInteger2 = get(cmd);
 					
-					System.out.println("value 2 : " + valueInteger2);
+					System.out.println("ipInDelivers : " + valueInteger2 +"\n");
 					
 					// send the trap with the first value
 					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\"";
