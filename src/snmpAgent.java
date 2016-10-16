@@ -29,7 +29,7 @@ public class snmpAgent {
 
 				// command that will be executed
 				//String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0"; 
-				String commandline = "snmpget -v 2c -c ttm4128 138.68.88.225 ipInReceives.0"; 
+				String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0"; //138.68.88.225
 				
 				// First data : total number of input datagrams (IPv4) received from interfaces, including those received in error
 				String[] cmd = {"bash","-c",commandline}; // String array used by the exec method
@@ -52,13 +52,13 @@ public class snmpAgent {
 				if(valueInteger1 > threshold){
 					
 					// get the second value needed : total number of input datagrams successfully delivered to IPv4 user-protocols (including ICMP)
-					cmd[2] = "snmpget -v 2c -c ttm4128 138.68.88.225 ipInDelivers.0";                   
+					cmd[2] = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0";                   
 					valueInteger2 = get(cmd);
 					
 					System.out.println("value 2 : " + valueInteger2);
 					
 					// send the trap with the two values
-					commandline = "snmptrap -v 2c -c ttm4128 138.68.88.225 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\" SNMPv2-MIB::ipInDelivers.0 s \"" + valueInteger2  + "\"";
+					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\" SNMPv2-MIB::ipInDelivers.0 s \"" + valueInteger2  + "\"";
 					cmd[2] = commandline;
 					
 					try{
