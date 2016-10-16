@@ -4,96 +4,130 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.io.*;
 
-
-
-
 public class snmpAgent {
 
-	
+
 	public static void main(String[] args) {
-	     
-		////////////////////////////////////////////////////////////////////////////////////////
-		
-        long temps = 2000;                     // time before repeating the task : 2000 = 2 secondes
-        long startTime = 0;                    // time before starting the task (0 : immediat start)
-        Timer timer = new Timer();             // timer creation
-        TimerTask tache = new TimerTask() {    // timer task creation and specification of what will be done
-            @Override
-            
-                public void run() {
-                    String line; 
-                    String value;
-                    int valueInteger = 0;
-                    // String value = 0;
-                    // String[] cmd = {"bash","-c","ls"};
-                    // String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 sysContact.0"};
-                    // Total RAM used: .1.3.6.1.4.1.2021.4.6.0 snmpget -v 2c -c ttm4128 127.0.0.1 UCD-SNMP-MIB::memAvailReal.0
-                    
-                    String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0";
-                    // First data :
-                    String[] cmd = {"bash","-c",commandline};
-                    
-                    // Second data :
-                    // String[] cmd = {"bash","-c","snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0"};
-                    
-                    System.out.println("Hello, world!\n"); //test
-                    try { 
-                        Process p = Runtime.getRuntime().exec(cmd); //Execute the cmd
-                        BufferedReader input =
-                            new BufferedReader(new InputStreamReader(p.getInputStream())); 
-                        while ((line = input.readLine()) != null) { // Read data
-                   
-                            System.out.println(line);
-                            value = line.substring(line.lastIndexOf(" ")+1); // Get the value
-                            //lastWord = line.substring(line.lastIndexOf(" ")-1);
-                            //System.out.println(value);
-                            valueInteger = Integer.valueOf(value); // convert string into integer
-                            System.out.println(valueInteger); // print the integer value
-                            
-                            // Write value in text file
-                            write(value + "\n"); //EOL
-                            
-                            // Just a test
-                            if(valueInteger > 449789){
-                            	commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif anotif s \"here\"";
-                            	cmd[2] = commandline;
-                                
-                            	Process r = Runtime.getRuntime().exec(cmd);
-                            }
- 
-                        }
-                        input.close();
-                    } catch (Exception e) {
-                    	
-                    }
-                }
-        };
-        timer.scheduleAtFixedRate(tache,startTime,temps);  // beginning of the mechanism
- 
-        }
-	
-	
-	
-		public static void write(String text) {
+
+
+		// Variables used for the timer
+		long temps = 2000;                    // time before repeating the task : 60000 = 60 secondes
+		long startTime = 0;                    // time before starting the task (0 : immediate start)
+		Timer timer = new Timer();             // timer creation
+		TimerTask tache = new TimerTask() {    // timer task creation and specification of what will be done
+			@Override
+
+			public void run() {
+
+				////////////////////////////////////////
+				// VARIABLES
+				////////////////////////////////////////
+
+				int valueInteger1 = 0; // variable used to store the value 1 found as an Integer
+
+				int valueInteger2 = 0; // variable used to store the value 2 found as an Integer
+
+				// command that will be executed
+				String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0"; 
+
+				// First data : total number of input datagrams (IPv4) received from interfaces, including those received in error
+				String[] cmd = {"bash","-c",commandline}; // String array used by the exec method
+
+				////////////////////////////////////////
+				// START
+				////////////////////////////////////////
+
+				System.out.println("Gathering Informations\n"); // printing a text in the terminal
+
+				// get the value of total number of input datagrams (IPv4) received from interfaces, including those received in error
+				valueInteger1 = get(cmd);
+				
+				System.out.println("Fin get 1\n");
+
+				// definition of the threshold                            
+				int threshold = 449789;
+
+				// if the value is bigger than the threshold then the trap must be sent with the two informations
+				if(valueInteger1 > threshold){
+
+					// get the second value needed : total number of input datagrams successfully delivered to IPv4 user-protocols (including ICMP)
+					cmd[2] = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0";                   
+					valueInteger2 = get(cmd);
+
+					// send the trap with the two values
+					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\" SNMPv2-MIB::ipInDelivers.0 s \"" + valueInteger2  + "\"";
+					cmd[2] = commandline;
+					try{
+						Process r = Runtime.getRuntime().exec(cmd); // execute the cmd
+					}
+					catch (Exception e){
+
+					}
+
+				}
+
+			}
+
+
+		};
+		timer.scheduleAtFixedRate(tache,startTime,temps);  // beginning of the mechanism
+
+	}
+
+
+	// this method is used to create and write the data into a text file.
+	public static void write(String text) {
 		try {
-			
+
 			File file = new File("./values.txt");
 
-			// if file doesnt exists, then create it
+			// if file doesn't exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 
-			FileWriter fw = new FileWriter(file.getAbsoluteFile(),true); //the true will append the new data
+			FileWriter fw = new FileWriter(file.getAbsoluteFile(),true); // true --> will append the new data at the end of the file
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(text);
+			bw.write(text); // write the value
 			bw.close();
-
-			System.out.println("Done");
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+	// this method is used to get and return the value wanted as an integer
+	public static int get(String[] command) {
+
+		String line; // variable used to store the result text
+		int value = 0;
+		
+		System.out.println("try\n");
+		// let try to get the value
+		try { 
+			Process p = Runtime.getRuntime().exec(command); // execute the cmd
+			System.out.println(command[2] + "\n \n");
+			
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream())); // definition of a new buffer reader
+			
+			System.out.println("lecture\n");
+			while ((line = input.readLine()) != null) {// Read data as long as there is data to read
+								
+				System.out.println(line); // printing the gathered information
+
+				value = Integer.valueOf(line.substring(line.lastIndexOf(" ")+1)); // extract the value from the string
+
+				// Write value in text file by calling the method write
+				write(value + "\n"); //EOL
+			}
+			input.close();
+
+		} catch (Exception e) {
+
+		}
+
+		return value;
+	}
+
 
 }
