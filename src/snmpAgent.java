@@ -43,6 +43,9 @@ public class snmpAgent {
 				// get the value of total number of input datagrams (IPv4) received from interfaces, including those received in error
 				valueInteger1 = get(cmd);
 				
+				// Write value in text file by calling the method write
+				write(valueInteger1 + "\n");
+				
 				System.out.println("value 1 : " + valueInteger1);
 
 				// definition of the threshold                            
@@ -59,13 +62,15 @@ public class snmpAgent {
 					
 					// send the trap with the two values
 					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\" SNMPv2-MIB::ipInDelivers.0 s \"" + valueInteger2  + "\"";
+					System.out.println(commandline);
+					
 					cmd[2] = commandline;
 					
 					try{
 						Process r = Runtime.getRuntime().exec(cmd); // execute the cmd
 					}
 					catch (Exception e){
-
+						e.printStackTrace();
 					}
 					System.out.println("after");
 
@@ -120,13 +125,11 @@ public class snmpAgent {
 
 				value = Integer.valueOf(line.substring(line.lastIndexOf(" ")+1)); // extract the value from the string
 
-				// Write value in text file by calling the method write
-				write(value + "\n"); //EOL
 			}
 			input.close();
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 
 		return value;
