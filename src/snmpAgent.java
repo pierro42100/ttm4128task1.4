@@ -60,20 +60,8 @@ public class snmpAgent {
 					
 					System.out.println("ipInDelivers : " + valueInteger2 +"\n");
 					
-					// send the trap with the first value
-					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\"";
-										
-					cmd[2] = commandline;
+					// send the trap with the two values
 					
-					try{
-						Process r = Runtime.getRuntime().exec(cmd); // execute the cmd
-					}
-					catch (Exception e){
-						e.printStackTrace();
-					}
-
-					// snmptrap -v 2c -c ttm4128 127.0.0.1 "" NTNU-NOTIFICATION-MIB::anotif anotif s "Notification" ipInReceives.0 counter32 "87654" ipInDelivers.0 counter32 "1234"
-					// send the trap with the second values
 					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif anotif s \"Notification\" ipInReceives.0 counter32 \"" + valueInteger1 + "\" ipInDelivers.0 counter32 \"" + valueInteger2  + "\"";
 										
 					cmd[2] = commandline;
