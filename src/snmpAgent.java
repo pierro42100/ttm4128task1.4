@@ -11,7 +11,7 @@ public class snmpAgent {
 
 
 		// Variables used for the timer
-		long temps = 2000;                    // time before repeating the task : 60000 = 60 secondes
+		long temps = 60000;                    // time before repeating the task : 60000 = 60 secondes
 		long startTime = 0;                    // time before starting the task (0 : immediate start)
 		Timer timer = new Timer();             // timer creation
 		TimerTask tache = new TimerTask() {    // timer task creation and specification of what will be done
@@ -28,8 +28,9 @@ public class snmpAgent {
 				int valueInteger2 = 0; // variable used to store the value 2 found as an Integer
 
 				// command that will be executed
-				String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0"; 
-
+				//String commandline = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInReceives.0"; 
+				String commandline = "snmpget -v 2c -c ttm4128 138.68.88.225 ipInReceives.0"; 
+				
 				// First data : total number of input datagrams (IPv4) received from interfaces, including those received in error
 				String[] cmd = {"bash","-c",commandline}; // String array used by the exec method
 
@@ -42,27 +43,31 @@ public class snmpAgent {
 				// get the value of total number of input datagrams (IPv4) received from interfaces, including those received in error
 				valueInteger1 = get(cmd);
 				
-				System.out.println("Fin get 1\n");
+				System.out.println("value 1 : " + valueInteger1);
 
 				// definition of the threshold                            
 				int threshold = 449789;
 
 				// if the value is bigger than the threshold then the trap must be sent with the two informations
 				if(valueInteger1 > threshold){
-
+					
 					// get the second value needed : total number of input datagrams successfully delivered to IPv4 user-protocols (including ICMP)
-					cmd[2] = "snmpget -v 2c -c ttm4128 127.0.0.1 ipInDelivers.0";                   
+					cmd[2] = "snmpget -v 2c -c ttm4128 138.68.88.225 ipInDelivers.0";                   
 					valueInteger2 = get(cmd);
-
+					
+					System.out.println("value 2 : " + valueInteger2);
+					
 					// send the trap with the two values
-					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\" SNMPv2-MIB::ipInDelivers.0 s \"" + valueInteger2  + "\"";
+					commandline = "snmptrap -v 2c -c ttm4128 138.68.88.225 \"\" NTNU-NOTIFICATION-MIB::anotif SNMPv2-MIB::ipInReceives.0 s \"" + valueInteger1 + "\" SNMPv2-MIB::ipInDelivers.0 s \"" + valueInteger2  + "\"";
 					cmd[2] = commandline;
+					
 					try{
 						Process r = Runtime.getRuntime().exec(cmd); // execute the cmd
 					}
 					catch (Exception e){
 
 					}
+					System.out.println("after");
 
 				}
 
@@ -102,18 +107,16 @@ public class snmpAgent {
 		String line; // variable used to store the result text
 		int value = 0;
 		
-		System.out.println("try\n");
 		// let try to get the value
 		try { 
 			Process p = Runtime.getRuntime().exec(command); // execute the cmd
-			System.out.println(command[2] + "\n \n");
+			//System.out.println(command[2] + "\n \n");
 			
 			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream())); // definition of a new buffer reader
 			
-			System.out.println("lecture\n");
 			while ((line = input.readLine()) != null) {// Read data as long as there is data to read
 								
-				System.out.println(line); // printing the gathered information
+				//System.out.println(line); // printing the gathered information
 
 				value = Integer.valueOf(line.substring(line.lastIndexOf(" ")+1)); // extract the value from the string
 
