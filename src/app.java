@@ -4,7 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.io.*;
 
-public class snmpAgent {
+public class app {
 
 
 	public static void main(String[] args) {
@@ -62,7 +62,7 @@ public class snmpAgent {
 					
 					// send the trap with the two values
 					
-					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif anotif s \"Notification\" ipInReceives.0 counter32 \"" + valueInteger1 + "\" ipInDelivers.0 counter32 \"" + valueInteger2  + "\"";
+					commandline = "snmptrap -v 2c -c ttm4128 127.0.0.1 \"\" NTNU-NOTIFICATION-MIB::anotif ipInReceives.0 counter32 \"" + valueInteger1 + "\" ipInDelivers.0 counter32 \"" + valueInteger2  + "\"";
 										
 					cmd[2] = commandline;
 					
