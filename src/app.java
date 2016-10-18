@@ -6,10 +6,12 @@ import java.io.*;
 
 public class app {
 
-
+	static int counter = 0;
+	static int threshold = 0;
+	static float tmp = 0.0f;
 	public static void main(String[] args) {
 
-
+		
 		// Variables used for the timer
 		long temps = 60000;                    // time before repeating the task : 60000 = 60 secondes
 		long startTime = 0;                    // time before starting the task (0 : immediate start)
@@ -48,9 +50,21 @@ public class app {
 				
 				System.out.println("ipInReceives : " + valueInteger1);
 
-				// definition of the threshold                            
-				int threshold = 449789;
-
+				// definition of the threshold
+				
+				if(counter == 0) // if it is the first time we get this value
+				{
+					tmp = valueInteger1;
+					tmp = tmp + tmp*0.1f;  // first value get + 10% of this value
+					
+					threshold = (int)tmp; // the first value got will be the threshold (float in int)
+					
+					counter = counter + 1;
+				}
+				
+				
+				// Here we have to 
+				
 				// if the value is bigger than the threshold then the trap must be sent with the two informations
 				if(valueInteger1 > threshold){
 					
