@@ -64,7 +64,7 @@ public class app {
 				
 				
 				// Here we have to 
-				
+				System.out.println(threshold);
 				// if the value is bigger than the threshold then the trap must be sent with the two informations
 				if(valueInteger1 > threshold){
 					
