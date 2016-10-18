@@ -55,7 +55,7 @@ public class app {
 				if(counter == 0) // if it is the first time we get this value
 				{
 					tmp = valueInteger1;
-					tmp = tmp + tmp*0.1f;  // first value get + 10% of this value
+					tmp = tmp + tmp*0.15f;  // first value get + 10% of this value
 					
 					threshold = (int)tmp; // the first value got will be the threshold (float in int)
 					
