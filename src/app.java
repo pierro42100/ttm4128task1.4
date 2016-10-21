@@ -1,4 +1,4 @@
-// This class defines a snmp agent
+
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,7 +71,7 @@ public class app {
 
 					// Here we have to 
 					System.out.println("Threshold : " + threshold);
-					// if the value is bigger than the threshold then the trap must be sent with the two informations
+					// if the difference between the current value and the previous value is bigger than threshold the trap must be sent with the two informations
 					if(valueInteger1 - oldValue1 > threshold){
 
 						// get the second value needed : total number of input datagrams successfully delivered to IPv4 user-protocols (including ICMP)
